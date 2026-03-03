@@ -6,5 +6,4 @@ const router = Router()
 
 router.post("/register", verifyToken, register)
 
-
 export default router
