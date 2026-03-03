@@ -13,4 +13,4 @@ app.use(cors({
 }))
 app.use("/api/auth",authRoutes)
 
-app.listen(process.env.PORT, () => console.info(`server started at http://localhost:${process.env.PORT}`))
+app.listen(process.env.PORT, () => console.log(`server started at http://localhost:${process.env.PORT}`))
