@@ -3,7 +3,6 @@ import { prisma } from "../prisma"
 import bcrypt from 'bcrypt';
 
 export const register = async (req: Request, res: Response) => {
-
     try {
         const { email, password, role } = req.body
         if (!email || !password) {
