@@ -3,6 +3,7 @@ import { prisma } from "../prisma"
 import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken"
+import { Role } from "../generated/prismag/enums";
 
 dotenv.config()
 
@@ -21,9 +22,9 @@ const genrateToken = (payload: string | object | Buffer<ArrayBufferLike>) => {
 
 export const register = async (req: Request, res: Response) => {
     try {
-        const { email, password, role } = req.body
-        if (!email || !password) {
-            res.status(400).json({ success: false, message: "Email and Password required" })
+        const { email, password, role,username,profileImage } = req.body
+        if (!email || !password || !role || !username || !profileImage) {
+          return  res.status(400).json({ success: false, message: "All fields are required" })
         }
         // Check if user exists
         const existingUser = await prisma.user.findUnique({ where: { email } })
@@ -37,12 +38,14 @@ export const register = async (req: Request, res: Response) => {
             data: {
                 email,
                 password: hashPasword,
-                role: role as "manager" | "employee"
+                role: role as Role,
+                username,
+                profileImage
             },
-            select: { id: true, email: true, role: true, createdAt: true }
+            select: { id: true, email: true, role: true, createdAt: true,username:true,profileImage:true }
         })
 
-        const payload = { email: user.email, role: user.role }
+        const payload = { email: user.email, role: user.role,username: user.username,profileImage:user.profileImage }
         const token = genrateToken(payload)
         res.cookie("token", token, cookieOptions)
         return res.status(201).json({ success: true, message: "Registration success", user  })
