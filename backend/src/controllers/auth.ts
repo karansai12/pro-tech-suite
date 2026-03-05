@@ -59,37 +59,36 @@ export const register = async (req: Request, res: Response) => {
 }
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body
+    const { username, password } = req.body
 
-    if (!email || !password) {
+    if (!username || !password) {
       return res
         .status(400)
-        .json({ success: false, message: "Email and password are required" })
+        .json({ success: false, message: "Username and password are required" })
     }
 
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { username }
     })
 
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid email or password" })
+        .json({ success: false, message: "No user exist" })
     }
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isPasswordMatch = await bcrypt.compare(password, user.password)
 
-    if (!isMatch) {
+    if (!isPasswordMatch) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid email or password" })
+        .json({ success: false, message: "Invalid username or password" })
     }
 
     const payload = {
       email: user.email,
       role: user.role,
       username: user.username,
-      profileImage: user.profileImage
     }
 
     const token = generateToken(payload)
@@ -104,14 +103,12 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         username: user.username,
         role: user.role,
-        profileImage: user.profileImage,
-        createdAt: user.createdAt
+        profileImage: user.profileImage
       }
     })
 
   } catch (error) {
-    console.error(error)
-    return res.status(500).json({ message: "Login failed" })
+    return res.status(500).json({ message: "Login failed",error })
   } finally {
     await prisma.$disconnect()
   }
