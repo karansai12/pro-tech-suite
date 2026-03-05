@@ -7,7 +7,7 @@ import { Role } from "../generated/prismag/enums";
 
 dotenv.config()
 
-const jwt_secret = process.env.JWT_SCRET!
+const jwt_secret = process.env.JWT_SECRET!
 const saltRounds = 12
 const cookieOptions: CookieOptions = {
     httpOnly: true,
@@ -16,8 +16,8 @@ const cookieOptions: CookieOptions = {
     maxAge: 24 * 60 * 60 * 1000
 }
 
-const genrateToken = (payload: string | object | Buffer<ArrayBufferLike>) => {
-    return jwt.sign(payload, jwt_secret, { expiresIn: "1h" })
+const generateToken = (payload: string | object | Buffer<ArrayBufferLike>) => {
+    return jwt.sign(payload, jwt_secret, { expiresIn: "1d" })
 }
 
 export const register = async (req: Request, res: Response) => {
@@ -46,7 +46,7 @@ export const register = async (req: Request, res: Response) => {
         })
 
         const payload = { email: user.email, role: user.role,username: user.username,profileImage:user.profileImage }
-        const token = genrateToken(payload)
+        const token = generateToken(payload)
         res.cookie("token", token, cookieOptions)
         return res.status(201).json({ success: true, message: "Registration success", user  })
     } catch (error) {
@@ -56,4 +56,63 @@ export const register = async (req: Request, res: Response) => {
     finally {
         await prisma.$disconnect()
     }
+}
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email and password are required" })
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email }
+    })
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email or password" })
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email or password" })
+    }
+
+    const payload = {
+      email: user.email,
+      role: user.role,
+      username: user.username,
+      profileImage: user.profileImage
+    }
+
+    const token = generateToken(payload)
+
+    res.cookie("token", token, cookieOptions)
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        profileImage: user.profileImage,
+        createdAt: user.createdAt
+      }
+    })
+
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({ message: "Login failed" })
+  } finally {
+    await prisma.$disconnect()
+  }
 }
