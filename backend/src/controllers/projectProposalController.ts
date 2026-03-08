@@ -30,21 +30,21 @@ export const getAllProposals = async (req: CustomeRequest, res: Response) => {
 
 export const getProposalById = async (req: CustomeRequest, res: Response) => {
 
-    // try {
-    //     const { proposalId } = req.params 
-    //     const proposal = await prisma.projectProposal.findUnique({
-    //         where: {  proposalId },
-    //         include: { user: { select: { username: true, email: true } } },
-    //     });
+    try {
+        const { proposalId } = req.params as { proposalId: string }
+        const proposal = await prisma.projectProposal.findUnique({
+            where: {  proposalId },
+            include: { user: { select: { username: true, email: true } } },
+        });
 
-    //     if (!proposal) {
-    //         return res.status(404).json({ message: "Proposal not found." });
-    //     }
+        if (!proposal) {
+            return res.status(404).json({ message: "Proposal not found." });
+        }
 
-    //     return res.status(200).json(proposal);
-    // } catch (error) {
-    //     return res.status(400).json({ message: "Failed to fetch proposal.", error });
-    // }
+        return res.status(200).json(proposal);
+    } catch (error) {
+        return res.status(400).json({ message: "Failed to fetch proposal.", error });
+    }
 }
 
 export const createProposal = async (req: CustomeRequest, res: Response) => {
