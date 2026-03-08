@@ -29,4 +29,18 @@ model User {
   role         Role     @default(employee)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+   proposals    ProjectProposal[]
+}
+
+model ProjectProposal {
+  proposalId          String   @id @default(uuid())
+  userId              String
+  user    User     @relation(fields: [userId], references: [id])
+  proposalTitle       String
+  proposalDescription String
+  status              String   @default("pending") // "pending" | "approved" | "rejected"
+  createdAt           DateTime @default(now())
+
+
 }

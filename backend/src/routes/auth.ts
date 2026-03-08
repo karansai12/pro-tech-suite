@@ -1,10 +1,16 @@
 import { Router } from "express"
-import { login, register } from "../controllers/auth"
+import { getAllEmployees, login, register } from "../controllers/userController"
 import { verifyToken } from "../midleware/auth"
+import { createProposal, getAllProposals, getProposalById } from "../controllers/projectProposalController"
 
 const router = Router()
 
-router.post("/register", verifyToken, register)
-router.post("/login",verifyToken,login)
+router.post("/register", register)
+router.post("/login", login)
+router.get("/getAllEmployees", verifyToken, getAllEmployees)
+
+router.get("/getAllProposals",verifyToken, getAllProposals)
+router.post("/createProposal", verifyToken, createProposal)
+router.post("/getProposalById", verifyToken, getProposalById)
 
 export default router
