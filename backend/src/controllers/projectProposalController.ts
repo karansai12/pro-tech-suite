@@ -99,3 +99,20 @@ export const updateProposal = async (req: CustomeRequest, res: Response) => {
         return res.status(400).json({ message: "Failed to update proposal.", error })
     }
 }
+
+export const deleteProposal = async (req: CustomeRequest, res: Response) => {
+    try {
+        const { proposalId } = req.params as { proposalId: string }
+        const existingProposal = await prisma.projectProposal.findUnique({ where: { proposalId } });
+        if (!existingProposal) {
+            return res.status(404).json({ message: "Proposal not found." });
+        }
+        if (req.user?.role === Role.employee && existingProposal?.userId !== req.user.id) {
+            return res.status(403).json({ message: "You can only delete your own proposals." });
+        }
+        await prisma.projectProposal.delete({ where: { proposalId } });
+        return res.status(200).json({ message: "Proposal deleted successfully." });
+    } catch (error) {
+        return res.status(400).json({ message: "Failed to delete proposal.", error })
+    }
+}
