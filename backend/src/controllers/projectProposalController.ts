@@ -33,7 +33,7 @@ export const getProposalById = async (req: CustomeRequest, res: Response) => {
     try {
         const { proposalId } = req.params as { proposalId: string }
         const proposal = await prisma.projectProposal.findUnique({
-            where: {  proposalId },
+            where: { proposalId },
             include: { user: { select: { username: true, email: true } } },
         });
 
@@ -73,29 +73,29 @@ export const createProposal = async (req: CustomeRequest, res: Response) => {
     }
 }
 
-export const updateProposal = async (req: CustomeRequest, res: Response)=>{
+export const updateProposal = async (req: CustomeRequest, res: Response) => {
     try {
-        const { proposalId } = req.params;
-    const { proposalTitle, proposalDescription, status } = req.body;
-     const existing = await prisma.projectProposal.findUnique({ where: { proposalId } });
-    if (!existing) {
-      return res.status(404).json({ message: "Proposal not found." });
-    }
-    if (req.user.role === Role.employee && existing.userId !== req.user.userId) {
-      return res.status(403).json({ message: "You can only edit your own proposals." });
-    }
-     const updated = await prisma.projectProposal.update({
-      where: { proposalId },
-      data: {
-        ...(proposalTitle && { proposalTitle }),
-        ...(proposalDescription && { proposalDescription }),
-        // Only managers can change status
-        ...(req.user.role === Role.manager && status && { status }),
-      },
-    });
+        const { proposalId } = req.params as { proposalId: string }
+        const { proposalTitle, proposalDescription, status } = req.body;
+        const existing = await prisma.projectProposal.findUnique({ where: { proposalId } });
+        if (!existing) {
+            return res.status(404).json({ message: "Proposal not found." });
+        }
+        if (req.user?.role === Role.employee && existing.userId !== req.user.id) {
+            return res.status(403).json({ message: "You can only edit your own proposals." });
+        }
+        const updated = await prisma.projectProposal.update({
+            where: { proposalId },
+            data: {
+                ...(proposalTitle && { proposalTitle }),
+                ...(proposalDescription && { proposalDescription }),
+                // Only managers can change status
+                ...(req.user?.role === Role.manager && status && { status }),
+            },
+        });
 
-     return res.status(200).json({ message: "Proposal updated successfully.",updated})
+        return res.status(200).json({ message: "Proposal updated successfully.", updated })
     } catch (error) {
-         return res.status(400).json({ message: "Failed to update proposal.", error})
+        return res.status(400).json({ message: "Failed to update proposal.", error })
     }
 }
