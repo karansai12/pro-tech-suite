@@ -11,6 +11,6 @@ router.get("/getAllEmployees", verifyToken, getAllEmployees)
 
 router.get("/getAllProposals",verifyToken, getAllProposals)
 router.post("/createProposal", verifyToken, createProposal)
-router.post("/getProposalById", verifyToken, getProposalById)
+router.get("/getProposalById/:proposalId", verifyToken, getProposalById)
 
 export default router
