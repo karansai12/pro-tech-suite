@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { getAllEmployees, login, register } from "../controllers/userController"
+import { getAllEmployees, login, register } from "../controllers/user"
 import { verifyToken } from "../midleware/auth"
 import { createProposal, deleteProposal, getAllProposals, getProposalById, updateProposal } from "../controllers/projectProposalController"
 import { createProject, deleteProject, getAllProjects, getProjectById, getProjectByUserId, updateProjectById } from "../controllers/projectController"

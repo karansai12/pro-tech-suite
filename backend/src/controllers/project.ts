@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { prisma } from "../prisma"
-import { Role } from "../generated/prismag/enums";
+import { Role } from "@prisma/client";
 
 interface CustomeRequest extends Request {
     user?: {
