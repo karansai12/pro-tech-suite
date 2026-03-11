@@ -8,3 +8,5 @@ router.get("/getProjectById/:projectId",verifyToken,getProjectById)
 router.put("/updateProject/:projectId",verifyToken,updateProjectById)
 router.delete("/deleteProject/:projectId",verifyToken,deleteProject)
 router.get("/getProjectByUserId/:id",verifyToken,getProjectByUserId)
+
+export default router

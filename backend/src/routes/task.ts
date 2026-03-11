@@ -8,3 +8,5 @@ router.delete("/deleteTask",verifyToken,deleteTask)
 router.get("/getTaskByUserId/:id",verifyToken,getTaskByUserId)
 router.put("/updateTask",verifyToken,updateTask)
 router.get("/getTaskById/:taskId",verifyToken,getTaskById)
+
+export default router
