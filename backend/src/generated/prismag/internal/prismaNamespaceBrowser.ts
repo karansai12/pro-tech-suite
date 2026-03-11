@@ -52,7 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  ProjectProposal: 'ProjectProposal'
+  ProjectProposal: 'ProjectProposal',
+  Project: 'Project',
+  Task: 'Task'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -96,6 +98,40 @@ export const ProjectProposalScalarFieldEnum = {
 } as const
 
 export type ProjectProposalScalarFieldEnum = (typeof ProjectProposalScalarFieldEnum)[keyof typeof ProjectProposalScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  projectId: 'projectId',
+  proposalId: 'proposalId',
+  projectTitle: 'projectTitle',
+  projectDescription: 'projectDescription',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  frontEndTechStack: 'frontEndTechStack',
+  backendEndTechStack: 'backendEndTechStack',
+  database: 'database',
+  createdAt: 'createdAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const TaskScalarFieldEnum = {
+  taskId: 'taskId',
+  projectId: 'projectId',
+  taskTitle: 'taskTitle',
+  taskDescription: 'taskDescription',
+  assignedTo: 'assignedTo',
+  status: 'status',
+  dueDate: 'dueDate',
+  startDate: 'startDate',
+  completedDate: 'completedDate',
+  priority: 'priority',
+  createdAt: 'createdAt'
+} as const
+
+export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
 export const SortOrder = {

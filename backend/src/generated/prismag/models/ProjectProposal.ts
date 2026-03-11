@@ -191,6 +191,7 @@ export type ProjectProposalWhereInput = {
   status?: Prisma.StringFilter<"ProjectProposal"> | string
   createdAt?: Prisma.DateTimeFilter<"ProjectProposal"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }
 
 export type ProjectProposalOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type ProjectProposalOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type ProjectProposalWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +216,7 @@ export type ProjectProposalWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"ProjectProposal"> | string
   createdAt?: Prisma.DateTimeFilter<"ProjectProposal"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }, "proposalId">
 
 export type ProjectProposalOrderByWithAggregationInput = {
@@ -247,6 +250,7 @@ export type ProjectProposalCreateInput = {
   status?: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProposalsInput
+  project?: Prisma.ProjectCreateNestedOneWithoutProposalInput
 }
 
 export type ProjectProposalUncheckedCreateInput = {
@@ -256,6 +260,7 @@ export type ProjectProposalUncheckedCreateInput = {
   proposalDescription: string
   status?: string
   createdAt?: Date | string
+  project?: Prisma.ProjectUncheckedCreateNestedOneWithoutProposalInput
 }
 
 export type ProjectProposalUpdateInput = {
@@ -265,6 +270,7 @@ export type ProjectProposalUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProposalsNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutProposalNestedInput
 }
 
 export type ProjectProposalUncheckedUpdateInput = {
@@ -274,6 +280,7 @@ export type ProjectProposalUncheckedUpdateInput = {
   proposalDescription?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUncheckedUpdateOneWithoutProposalNestedInput
 }
 
 export type ProjectProposalCreateManyInput = {
@@ -339,6 +346,11 @@ export type ProjectProposalMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type ProjectProposalScalarRelationFilter = {
+  is?: Prisma.ProjectProposalWhereInput
+  isNot?: Prisma.ProjectProposalWhereInput
+}
+
 export type ProjectProposalCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.ProjectProposalCreateWithoutUserInput, Prisma.ProjectProposalUncheckedCreateWithoutUserInput> | Prisma.ProjectProposalCreateWithoutUserInput[] | Prisma.ProjectProposalUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.ProjectProposalCreateOrConnectWithoutUserInput | Prisma.ProjectProposalCreateOrConnectWithoutUserInput[]
@@ -381,12 +393,27 @@ export type ProjectProposalUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ProjectProposalScalarWhereInput | Prisma.ProjectProposalScalarWhereInput[]
 }
 
+export type ProjectProposalCreateNestedOneWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.ProjectProposalCreateWithoutProjectInput, Prisma.ProjectProposalUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.ProjectProposalCreateOrConnectWithoutProjectInput
+  connect?: Prisma.ProjectProposalWhereUniqueInput
+}
+
+export type ProjectProposalUpdateOneRequiredWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectProposalCreateWithoutProjectInput, Prisma.ProjectProposalUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.ProjectProposalCreateOrConnectWithoutProjectInput
+  upsert?: Prisma.ProjectProposalUpsertWithoutProjectInput
+  connect?: Prisma.ProjectProposalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectProposalUpdateToOneWithWhereWithoutProjectInput, Prisma.ProjectProposalUpdateWithoutProjectInput>, Prisma.ProjectProposalUncheckedUpdateWithoutProjectInput>
+}
+
 export type ProjectProposalCreateWithoutUserInput = {
   proposalId?: string
   proposalTitle: string
   proposalDescription: string
   status?: string
   createdAt?: Date | string
+  project?: Prisma.ProjectCreateNestedOneWithoutProposalInput
 }
 
 export type ProjectProposalUncheckedCreateWithoutUserInput = {
@@ -395,6 +422,7 @@ export type ProjectProposalUncheckedCreateWithoutUserInput = {
   proposalDescription: string
   status?: string
   createdAt?: Date | string
+  project?: Prisma.ProjectUncheckedCreateNestedOneWithoutProposalInput
 }
 
 export type ProjectProposalCreateOrConnectWithoutUserInput = {
@@ -435,6 +463,58 @@ export type ProjectProposalScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ProjectProposal"> | Date | string
 }
 
+export type ProjectProposalCreateWithoutProjectInput = {
+  proposalId?: string
+  proposalTitle: string
+  proposalDescription: string
+  status?: string
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutProposalsInput
+}
+
+export type ProjectProposalUncheckedCreateWithoutProjectInput = {
+  proposalId?: string
+  userId: string
+  proposalTitle: string
+  proposalDescription: string
+  status?: string
+  createdAt?: Date | string
+}
+
+export type ProjectProposalCreateOrConnectWithoutProjectInput = {
+  where: Prisma.ProjectProposalWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectProposalCreateWithoutProjectInput, Prisma.ProjectProposalUncheckedCreateWithoutProjectInput>
+}
+
+export type ProjectProposalUpsertWithoutProjectInput = {
+  update: Prisma.XOR<Prisma.ProjectProposalUpdateWithoutProjectInput, Prisma.ProjectProposalUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.ProjectProposalCreateWithoutProjectInput, Prisma.ProjectProposalUncheckedCreateWithoutProjectInput>
+  where?: Prisma.ProjectProposalWhereInput
+}
+
+export type ProjectProposalUpdateToOneWithWhereWithoutProjectInput = {
+  where?: Prisma.ProjectProposalWhereInput
+  data: Prisma.XOR<Prisma.ProjectProposalUpdateWithoutProjectInput, Prisma.ProjectProposalUncheckedUpdateWithoutProjectInput>
+}
+
+export type ProjectProposalUpdateWithoutProjectInput = {
+  proposalId?: Prisma.StringFieldUpdateOperationsInput | string
+  proposalTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  proposalDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutProposalsNestedInput
+}
+
+export type ProjectProposalUncheckedUpdateWithoutProjectInput = {
+  proposalId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  proposalTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  proposalDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type ProjectProposalCreateManyUserInput = {
   proposalId?: string
   proposalTitle: string
@@ -449,6 +529,7 @@ export type ProjectProposalUpdateWithoutUserInput = {
   proposalDescription?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneWithoutProposalNestedInput
 }
 
 export type ProjectProposalUncheckedUpdateWithoutUserInput = {
@@ -457,6 +538,7 @@ export type ProjectProposalUncheckedUpdateWithoutUserInput = {
   proposalDescription?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUncheckedUpdateOneWithoutProposalNestedInput
 }
 
 export type ProjectProposalUncheckedUpdateManyWithoutUserInput = {
@@ -477,6 +559,7 @@ export type ProjectProposalSelect<ExtArgs extends runtime.Types.Extensions.Inter
   status?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectProposal$projectArgs<ExtArgs>
 }, ExtArgs["result"]["projectProposal"]>
 
 export type ProjectProposalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -511,6 +594,7 @@ export type ProjectProposalSelectScalar = {
 export type ProjectProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"proposalId" | "userId" | "proposalTitle" | "proposalDescription" | "status" | "createdAt", ExtArgs["result"]["projectProposal"]>
 export type ProjectProposalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectProposal$projectArgs<ExtArgs>
 }
 export type ProjectProposalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -523,6 +607,7 @@ export type $ProjectProposalPayload<ExtArgs extends runtime.Types.Extensions.Int
   name: "ProjectProposal"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     proposalId: string
@@ -926,6 +1011,7 @@ readonly fields: ProjectProposalFieldRefs;
 export interface Prisma__ProjectProposalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.ProjectProposal$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectProposal$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1354,6 +1440,25 @@ export type ProjectProposalDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many ProjectProposals to delete.
    */
   limit?: number
+}
+
+/**
+ * ProjectProposal.project
+ */
+export type ProjectProposal$projectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
 }
 
 /**
