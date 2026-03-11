@@ -3,7 +3,7 @@ import { prisma } from "../prisma"
 import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken"
-import { Role } from "../generated/prismag/enums";
+import { Role } from "@prisma/client";
 
 dotenv.config()
 
