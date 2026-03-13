@@ -3,8 +3,8 @@ services:
     image: pro-tech-suit-backennd:latest
     container_name: pro-tech-suit-backennd
     build:
-    context: .
-    dockerfile: /app
+      context: .
+      dockerfile: Dockerfile
     env_file:
       - .env
     ports:
