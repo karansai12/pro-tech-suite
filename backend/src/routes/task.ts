@@ -6,7 +6,7 @@ router.post("/createTask",verifyToken,createTask)
 router.get("/getAllTask",verifyToken,getAllTasks)
 router.delete("/deleteTask",verifyToken,deleteTask)
 router.get("/getTaskByUserId/:id",verifyToken,getTaskByUserId)
-router.put("/updateTask",verifyToken,updateTask)
+router.put("/updateTask/:taskId",verifyToken,updateTask)
 router.get("/getTaskById/:taskId",verifyToken,getTaskById)
 
 export default router

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken"
 import { Role } from "@prisma/client";
 
+
 dotenv.config()
 
 const jwt_secret = process.env.JWT_SECRET!
@@ -40,7 +41,7 @@ export const register = async (req: Request, res: Response) => {
     // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) {
-      return res.status(400).json({ message: "Email already exist" })
+      return res.status(400).json({ success:false,message: "Email already exist" })
     }
     // Hash password
     const hashPasword = await bcrypt.hash(password, saltRounds)
@@ -61,8 +62,7 @@ export const register = async (req: Request, res: Response) => {
     res.cookie("token", token, cookieOptions)
     return res.status(201).json({ success: true, message: "Registration success", user })
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Registration failed' });
+    return res.status(500).json({success:false, message: 'Registration failed',error });
   }
   finally {
     await prisma.$disconnect()

@@ -56,7 +56,7 @@ export const getAllTasks = async (req:Request, res:Response) => {
     })
 
     if (!tasks) {
-      return res.status(404).json({ message: "No tasks found." })
+      return res.status(404).json({ message: "No tasks found."})
     }
     return res.status(200).json({sucess:true,tasks  });
   } catch (error) {
