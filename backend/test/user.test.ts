@@ -317,3 +317,53 @@ describe('Login Endpoint Tests', () => {
     expect(cookies).not.toBeDefined();
   });
 })
+
+describe('Get All Employees Endpoint Tests', ()=>{
+  test('should fetch all student', async ()=>{
+    const mockPrismaCreateResponse = [
+      {
+         id: 'mock-userid1',
+        username: 'user1',
+        email: 'test@example.com',
+        role: "employee" as Role,
+        mobileNumber: '1234567890',
+        profileImage: 'mock-profile-image-data',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        password: 'mock-password',
+      },
+       {
+        id: 'mock-userid2',
+        username: 'user2',
+        email: 'test2@example.com',
+        role: "employee" as Role,
+        mobileNumber: '1234567890',
+        profileImage: 'mock-profile-image-data',
+        createdAt: new Date(),
+         updatedAt: new Date(),
+        password: 'mock-password',
+      },
+    ]
+    prismaMock.user.findMany.mockResolvedValue(mockPrismaCreateResponse);
+    mockJwt.verify.mockReturnValue({
+      id: 'mock-user',
+ email: 'test@test.com',
+      role: Role.manager,
+    }as never)
+     const response = await request(app)
+      .get('/api/user/getAllEmployees')
+      .set('Cookie', 'token=fake-token');
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.message).toBe("Emloyees fetched successfuly",);
+    expect(response.body.employees).toEqual(
+      mockPrismaCreateResponse.map((object) => {
+        return {
+          ...object,
+          createdAt: object.createdAt.toISOString(),
+          updatedAt: object.updatedAt.toISOString(), 
+        };
+      })
+    );
+  })
+})
