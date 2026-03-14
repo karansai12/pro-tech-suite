@@ -121,7 +121,7 @@ export const login = async (req: Request, res: Response) => {
     })
 
   } catch (error) {
-    return res.status(500).json({ message: "Login failed", error })
+    return res.status(500).json({success: false, message: "Login failed", error })
   } finally {
     await prisma.$disconnect()
   }
@@ -145,7 +145,7 @@ const skip = (pageNum - 1) * limitNum
       take:limitNum,
       skip:skip
     })
-    return res.status(200).json({ success: true, employees })
+    return res.status(200).json({ success: true, message:"Emloyees fetched successfuly",employees })
   } catch (error) {
     return res.status(500).json({ message: "Failed to fetch employees", error })
   }
