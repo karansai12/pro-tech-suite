@@ -3,8 +3,9 @@ import { expect, jest, describe, test, beforeEach } from "@jest/globals";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import jwt from "jsonwebtoken";
 import { prisma } from "../src/prisma";
-import { Role } from "@prisma/client";
-import { PrismaClient } from "@prisma/client";
+import { Role} from "@prisma/client";
+import {PrismaClient} from "@prisma/client"
+import bcrypt from 'bcrypt';
 import { app } from "../src/app";
 
 jest.mock("jsonwebtoken", () => ({
@@ -205,3 +206,114 @@ describe("Register Endpoint test", () => {
     })
   })
 });
+
+describe('Login Endpoint Tests', () => {
+  const mockValidLoginPayload = {
+    username: 'user',
+    password: 'Password123',
+  };
+  test('Should login user with valid data', async () => {
+    const mockPrismaLoginResponse = {
+      id: 'mock-userid',
+      username: mockValidLoginPayload.username,
+      email: 'test@example.com',
+      role: 'employee' as Role,
+      mobileNumber: '1234567890',
+      profileImage: 'mock-profile-image-data',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: bcrypt.hashSync(mockValidLoginPayload.password, 12),
+    };
+    prismaMock.user.findUnique.mockResolvedValue(mockPrismaLoginResponse);
+    mockJwt.sign.mockReturnValue('fake-token' as never);
+
+    const response = await request(app)
+      .post('/api/user/login')
+      .send(mockValidLoginPayload);
+
+    expect(response.status).toBe(200);        
+    expect(response.body.success).toBe(true)  
+    expect(response.body.message).toBe("Login successful")  
+    expect(response.body.user).toEqual({
+      id: mockPrismaLoginResponse.id,
+    email: mockPrismaLoginResponse.email,
+    username: mockPrismaLoginResponse.username,
+    role: mockPrismaLoginResponse.role,
+    profileImage: mockPrismaLoginResponse.profileImage
+    });
+    const cookie = response.headers['set-cookie']?.[0] || '';
+    validateCookie(cookie, 'token', 'fake-token');
+  });
+
+  test('should return error when prisma throws error', async () => {
+    prismaMock.user.findUnique.mockRejectedValue('Prisma Error');
+    mockJwt.sign.mockReturnValue('fake-token' as never);
+
+    const response = await request(app)
+      .post('/api/user/login')
+      .send(mockValidLoginPayload);
+
+    expect(response.status).toBe(500);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("Login failed");
+    expect(response.body.user).not.toBeDefined();
+    const cookies = response.headers['set-cookie'];
+    expect(cookies).not.toBeDefined();
+  });
+
+    test('should return validation error when payload is missing', async () => {
+    const response = await request(app).post('/api/user/login').send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe('Validation Error');
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors).toEqual([
+      {
+        field: 'username',
+        message: 'Username is required',
+      },
+      {
+        field: 'password',
+        message: 'Password is required',
+      },
+    ]);
+  });
+   test('should return error when user does not exists', async () => {
+    const response = await request(app)
+      .post('/api/user/login')
+      .send(mockValidLoginPayload);
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("No user exist");
+    expect(response.body.user).not.toBeDefined();
+    const cookies = response.headers['set-cookie'];
+    expect(cookies).not.toBeDefined();
+  });
+
+   test('Should throw error when password mismatch', async () => {
+    const mockPrismaLoginResponse = {
+      id: 'mock-userid',
+      username: mockValidLoginPayload.username,
+      email: 'test@example.com',
+      role: 'employee' as Role,
+      mobileNumber: '1234567890',
+      profileImage: 'mock-profile-image-data',
+      createdAt: new Date(),
+     updatedAt: new Date(),    
+      password: 'mock-password', 
+    };
+    prismaMock.user.findUnique.mockResolvedValue(mockPrismaLoginResponse);
+    const response = await request(app)
+      .post('/api/user/login')
+      .send(mockValidLoginPayload);
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe( "Invalid username or password" );
+    expect(response.body.user).not.toBeDefined();
+    const cookies = response.headers['set-cookie'];
+    expect(cookies).not.toBeDefined();
+  });
+})

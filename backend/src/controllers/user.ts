@@ -121,7 +121,7 @@ export const login = async (req: Request, res: Response) => {
     })
 
   } catch (error) {
-    return res.status(500).json({ message: "Login failed", error })
+    return res.status(500).json({success: false, message: "Login failed", error })
   } finally {
     await prisma.$disconnect()
   }
