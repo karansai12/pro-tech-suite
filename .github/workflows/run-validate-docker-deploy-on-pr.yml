@@ -36,7 +36,7 @@ jobs:
       - name: Validate Prod Docker Compose
         run: |
           docker compose -f docker-compose.prod.yml build
-          docker compose -f docker-compose.prod.yml up -d
+          docker compose -f docker-compose.prod.yml up
           sleep 5
           docker ps
 
