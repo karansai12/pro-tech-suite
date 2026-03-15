@@ -1,4 +1,4 @@
-import { createProposal, deleteProposal, getAllProposals, getProposalById, updateProposal } from "../controllers/project"
+import { createProposal, deleteProposal, getAllProposals, getProposalById, updateProposal } from "../controllers/proposal"
 import { verifyToken } from "../midleware/auth"
 import router from "./user"
 
