@@ -11,3 +11,7 @@ export const RegisterSchema  = z.object({
         error:"Role must be 'manager' or 'employee'"
     })
 })
+export const LoginSchema = z.object({
+  username: z.string('Username is required').nonempty(),
+  password: z.string('Password is required').nonempty(),
+});

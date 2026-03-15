@@ -42,5 +42,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
+  "include": ["src/**/*"],
   "exclude": ["eslint.config.mts","prisma","prisma.config.ts"],
 }
