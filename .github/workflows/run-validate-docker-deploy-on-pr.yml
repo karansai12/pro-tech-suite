@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "Listing all Docker images:"
           docker images
-          IMAGE_NAME=edu-hub-backend
+          IMAGE_NAME=pro-tech-suite-backend
           IMAGE_TAG=latest
           SIZE_BYTES=$(docker inspect ${IMAGE_NAME}:${IMAGE_TAG} --format='{{.Size}}')
           SIZE_MB=$((SIZE_BYTES / 1024 / 1024))
