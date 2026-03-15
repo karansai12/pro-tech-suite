@@ -1,4 +1,4 @@
-import { createProject, deleteProject, getAllProjects, getProjectById, getProjectByUserId, updateProjectById } from "../controllers/porposal"
+import { createProject, deleteProject, getAllProjects, getProjectById, getProjectByUserId, updateProjectById } from "../controllers/project"
 import { verifyToken } from "../midleware/auth"
 import router from "./user"
 

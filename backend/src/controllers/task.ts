@@ -10,159 +10,209 @@ interface CustomeRequest extends Request {
     }
 }
 
-export const createTask = async (req:Request, res:Response) => {
-  try {
-    const {
-      projectId,
-      taskTitle,
-      taskDescription,
-      assignedTo,
-      status,
-      dueDate,
-      startDate,
-      priority,
-    } = req.body;
-
-    if (!projectId || !taskTitle || !taskDescription || !priority) {
-      return res.status(400).json({ message: "projectId, taskTitle, taskDescription, and priority are required." });
+// Helper function to serialize dates in response
+const serializeDates = (obj: unknown): unknown => {
+    if (obj === null || obj === undefined) return obj;
+    if (obj instanceof Date) return obj.toISOString();
+    if (Array.isArray(obj)) return obj.map(serializeDates);
+    if (typeof obj === 'object') {
+        const serialized: Record<string, unknown> = {};
+        for (const key in obj) {
+            serialized[key] = serializeDates((obj as Record<string, unknown>)[key]);
+        }
+        return serialized;
     }
-
-    const task = await prisma.task.create({
-      data: {
-        projectId,
-        taskTitle,
-        taskDescription,
-        assignedTo: assignedTo || null,
-        status: status || "open",
-        dueDate: dueDate ? new Date(dueDate) : null,
-        startDate: startDate ? new Date(startDate) : null,
-        priority,
-      },
-    });
-
-    return res.status(201).json({ message: "Task created successfully.", task });
-  } catch (error) {
-    return res.status(400).json({ message: "Failed to create task.", error });
-  }
+    return obj;
 };
 
-export const getAllTasks = async (req:Request, res:Response) => {
-  try {
-  
- const tasks = await prisma.task.findMany({
-      include: {
-        project: { select: { projectTitle: true } },
-      },
-    })
+interface ValidationError {
+    field: string;
+    message: string;
+}
 
-    if (!tasks) {
-      return res.status(404).json({ message: "No tasks found."})
-    }
-    return res.status(200).json({sucess:true,tasks  });
-  } catch (error) {
-    return res.status(400).json({ message: "Failed to fetch tasks.", error });
-  }
+// Validation helper
+const validateTaskCreation = (body: unknown): ValidationError[] => {
+    const errors: ValidationError[] = [];
+    const input = body as Record<string, unknown>;
+    if (!input.projectId) errors.push({ field: "projectId", message: "projectId is required" });
+    if (!input.taskTitle) errors.push({ field: "taskTitle", message: "taskTitle is required" });
+    if (!input.taskDescription) errors.push({ field: "taskDescription", message: "taskDescription is required" });
+    if (!input.priority) errors.push({ field: "priority", message: "priority is required" });
+    return errors;
 };
 
-export const getTaskById = async (req:Request, res:Response) => {
-  try {
-    const { taskId } = req.params as {taskId : string}
+export const createTask = async (req: Request, res: Response) => {
+    try {
+        const {
+            projectId,
+            taskTitle,
+            taskDescription,
+            assignedTo,
+            status,
+            dueDate,
+            startDate,
+            priority,
+        } = req.body;
 
-    const task = await prisma.task.findUnique({
-      where: { taskId },
-      include: {
-        project: { select: { projectTitle: true } },
-        assignedUser: { select: { username: true, email: true } },
-      },
-    });
+        // Validate required fields
+        const validationErrors = validateTaskCreation(req.body);
+        if (validationErrors.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Validation Error",
+                errors: validationErrors
+            });
+        }
 
-    if (!task) {
-      return res.status(404).json({ message: "Task not found." });
+        const task = await prisma.task.create({
+            data: {
+                projectId,
+                taskTitle,
+                taskDescription,
+                assignedTo: assignedTo || null,
+                status: status || "open",
+                dueDate: dueDate ? new Date(dueDate) : null,
+                startDate: startDate ? new Date(startDate) : null,
+                priority,
+            },
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: "Task created successfully.",
+            task: serializeDates(task)
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "Failed to create task.",
+            error
+        });
     }
-
-    return res.status(200).json(task);
-  } catch (error) {
-    return res.status(400).json({ message: "Failed to fetch task.", error });
-  }
 };
 
-export const deleteTask = async (req:Request, res:Response) => {
-  try {
-    const { taskId } = req.params as {taskId : string}
+export const getAllTasks = async (req: Request, res: Response) => {
+    try {
+        const tasks = await prisma.task.findMany({
+            include: {
+                project: { select: { projectTitle: true } },
+            },
+        });
 
-    const existing = await prisma.task.findUnique({ where: { taskId } });
-    if (!existing) {
-      return res.status(404).json({ message: "Task not found." });
+        if (!tasks || tasks.length === 0) {
+            return res.status(404).json({ message: "No tasks found." });
+        }
+        return res.status(200).json({ success: true, tasks: serializeDates(tasks) });
+    } catch (error) {
+        return res.status(400).json({ message: "Failed to fetch tasks.", error });
     }
-
-    await prisma.task.delete({ where: { taskId } });
-
-    return res.status(200).json({ message: "Task deleted successfully." });
-  } catch (error) {
-    return res.status(400).json({ message: "Failed to delete task.", error });
-  }
 };
 
-export const updateTask = async (req:CustomeRequest, res:Response) => {
-  try {
-    const { taskId } = req.params as {taskId : string}
-    const {
-      taskTitle,
-      taskDescription,
-      assignedTo,
-      status,
-      dueDate,
-      startDate,
-      completedDate,
-      priority,
-    } = req.body;
-     
-    const existing = await prisma.task.findUnique({ where: { taskId } });
-    if (!existing) {
-      return res.status(404).json({ message: "Task not found." });
+export const getTaskById = async (req: Request, res: Response) => {
+    try {
+        const { taskId } = req.params as { taskId: string };
+
+        const task = await prisma.task.findUnique({
+            where: { taskId },
+            include: {
+                project: { select: { projectTitle: true } },
+                assignedUser: { select: { username: true, email: true } },
+            },
+        });
+
+        if (!task) {
+            return res.status(404).json({ message: "Task not found." });
+        }
+
+        return res.status(200).json(serializeDates(task));
+    } catch (error) {
+        return res.status(400).json({ message: "Failed to fetch task.", error });
     }
-   
-   
-    const isEmployee = req.user?.role === Role.employee;
-
-    const updated = await prisma.task.update({
-      where: { taskId },
-      data: {
-        ...(startDate && { startDate: new Date(startDate) }),
-        ...(completedDate && { completedDate: new Date(completedDate) }),
-        ...(status && { status }),
-        
-        ...(!isEmployee && taskTitle && { taskTitle }),
-        ...(!isEmployee && taskDescription && { taskDescription }),
-        ...(!isEmployee && assignedTo !== undefined && { assignedTo }),
-        ...(!isEmployee && dueDate && { dueDate: new Date(dueDate) }),
-        ...(!isEmployee && priority && { priority }),
-      },
-    });
-
-    return res.status(200).json({ message: "Task updated successfully.", task: updated });
-  } catch (error) {
-    return res.status(400).json({ message: "Failed to update task.", error});
-  }
 };
 
-export const getTaskByUserId = async (req:CustomeRequest, res:Response) => {
-  try {
-    const { userId } = req.params  as {userId : string}
+export const deleteTask = async (req: CustomeRequest, res: Response) => {
+    try {
+        const { taskId } = req.params as { taskId: string };
 
-    const tasks = await prisma.task.findMany({
-      where: { assignedTo: userId },
-      include: {
-        project: { select: { projectTitle: true } },
-      }
-    });
+        if (!taskId) {
+            return res.status(400).json({ success: false, message: "Task ID is required" });
+        }
 
-    if (!tasks.length) {
-      return res.status(404).json({ message: "No tasks found for this user." });
+        const existing = await prisma.task.findUnique({ where: { taskId } });
+        if (!existing) {
+            return res.status(404).json({ message: "Task not found." });
+        }
+
+        await prisma.task.delete({ where: { taskId } });
+
+        return res.status(200).json({ message: "Task deleted successfully." });
+    } catch (error) {
+        return res.status(400).json({ message: "Failed to delete task.", error });
     }
+};
 
-    return res.status(200).json({ tasks });
-  } catch (error) {
-    return res.status(400).json({ message: "Failed to fetch tasks.", error });
-  }
+export const updateTask = async (req: CustomeRequest, res: Response) => {
+    try {
+        const { taskId } = req.params as { taskId: string };
+        const {
+            taskTitle,
+            taskDescription,
+            assignedTo,
+            status,
+            dueDate,
+            startDate,
+            completedDate,
+            priority,
+        } = req.body;
+
+        const existing = await prisma.task.findUnique({ where: { taskId } });
+        if (!existing) {
+            return res.status(404).json({ message: "Task not found." });
+        }
+
+        const isEmployee = req.user?.role === Role.employee;
+
+        const updated = await prisma.task.update({
+            where: { taskId },
+            data: {
+                ...(startDate && { startDate: new Date(startDate) }),
+                ...(completedDate && { completedDate: new Date(completedDate) }),
+                ...(status && { status }),
+                ...(!isEmployee && taskTitle && { taskTitle }),
+                ...(!isEmployee && taskDescription && { taskDescription }),
+                ...(!isEmployee && assignedTo !== undefined && { assignedTo }),
+                ...(!isEmployee && dueDate && { dueDate: new Date(dueDate) }),
+                ...(!isEmployee && priority && { priority }),
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Task updated successfully.",
+            task: serializeDates(updated)
+        });
+    } catch (error) {
+        return res.status(400).json({ success: false, message: "Failed to update task.", error });
+    }
+};
+
+export const getTaskByUserId = async (req: CustomeRequest, res: Response) => {
+    try {
+        const { id } = req.params as { id: string };
+
+        const tasks = await prisma.task.findMany({
+            where: { assignedTo: id },
+            include: {
+                project: { select: { projectTitle: true } },
+            }
+        });
+
+        if (!tasks.length) {
+            return res.status(404).json({ message: "No tasks found for this user." });
+        }
+
+        return res.status(200).json({ tasks: serializeDates(tasks) });
+    } catch (error) {
+        return res.status(400).json({ message: "Failed to fetch tasks.", error });
+    }
 };
