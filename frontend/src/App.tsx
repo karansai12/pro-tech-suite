@@ -16,11 +16,6 @@ import NewTask from "./pages/newTask";
 import EditTask, { editTaskLoader } from "./pages/editTask";
 import EditProposal, { editproposalLoader } from "./pages/editProposal";
 
-// children:[
-//   {path:"/register",elemet:<Register/>},
-//   {path:"/login",elemet:<Login/>},
-// ]
-
 function App() {
   const routes = [
     {

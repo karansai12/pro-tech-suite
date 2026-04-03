@@ -15,9 +15,6 @@ export const getAllProposals = async (req: CustomeRequest, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
-    // if (req.user.role !== Role.manager) {
-    //     return res.status(401).json({ message: "Not authorized" })
-    // }
     const proposals = await prisma.projectProposal.findMany();
     return res.status(200).json({ success: true, proposals });
   } catch (error) {
