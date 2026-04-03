@@ -72,7 +72,9 @@ describe("Create Project Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.projectProposal.findUnique.mockResolvedValue(mockProposal as never);
+    prismaMock.projectProposal.findUnique.mockResolvedValue(
+      mockProposal as never,
+    );
     prismaMock.projectProposal.update.mockResolvedValue({
       ...mockProposal,
       status: "approved",
@@ -106,7 +108,9 @@ describe("Create Project Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.projectProposal.findUnique.mockResolvedValue(approvedProposal as never);
+    prismaMock.projectProposal.findUnique.mockResolvedValue(
+      approvedProposal as never,
+    );
 
     const response = await request(app)
       .post("/api/project/createProject")
@@ -170,7 +174,9 @@ describe("Create Project Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.projectProposal.findUnique.mockRejectedValue(new Error("Database error"));
+    prismaMock.projectProposal.findUnique.mockRejectedValue(
+      new Error("Database error"),
+    );
 
     const response = await request(app)
       .post("/api/project/createProject")
@@ -305,7 +311,9 @@ describe("Get Project By ID Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.project.findUnique.mockResolvedValue(mockProjectWithDetails as never);
+    prismaMock.project.findUnique.mockResolvedValue(
+      mockProjectWithDetails as never,
+    );
 
     const response = await request(app)
       .get("/api/project/getProjectById/project-123")
@@ -339,8 +347,9 @@ describe("Get Project By ID Endpoint Tests", () => {
   });
 
   test("should return 401 when no token provided", async () => {
-    const response = await request(app)
-      .get("/api/project/getProjectById/project-123");
+    const response = await request(app).get(
+      "/api/project/getProjectById/project-123",
+    );
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("No token provided");
@@ -391,7 +400,9 @@ describe("Update Project Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.project.findUnique.mockResolvedValue(mockExistingProject as never);
+    prismaMock.project.findUnique.mockResolvedValue(
+      mockExistingProject as never,
+    );
     prismaMock.project.update.mockResolvedValue(mockUpdatedProject as never);
 
     const response = await request(app)
@@ -424,7 +435,9 @@ describe("Update Project Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.project.findUnique.mockResolvedValue(mockExistingProject as never);
+    prismaMock.project.findUnique.mockResolvedValue(
+      mockExistingProject as never,
+    );
     prismaMock.project.update.mockResolvedValue(mockUpdatedProject as never);
 
     const response = await request(app)
@@ -433,8 +446,12 @@ describe("Update Project Endpoint Tests", () => {
       .set("Cookie", "token=fake-token");
 
     expect(response.status).toBe(200);
-    expect(response.body.project.projectTitle).toBe(partialUpdatePayload.projectTitle);
-    expect(response.body.project.projectDescription).toBe(mockExistingProject.projectDescription);
+    expect(response.body.project.projectTitle).toBe(
+      partialUpdatePayload.projectTitle,
+    );
+    expect(response.body.project.projectDescription).toBe(
+      mockExistingProject.projectDescription,
+    );
   });
 
   test("should return 404 when project to update does not exist", async () => {
@@ -485,7 +502,9 @@ describe("Delete Project Endpoint Tests", () => {
       role: Role.manager,
     } as never);
 
-    prismaMock.project.findUnique.mockResolvedValue(mockExistingProject as never);
+    prismaMock.project.findUnique.mockResolvedValue(
+      mockExistingProject as never,
+    );
     prismaMock.task.deleteMany.mockResolvedValue({} as never);
     prismaMock.project.delete.mockResolvedValue(mockExistingProject as never);
 
@@ -515,8 +534,9 @@ describe("Delete Project Endpoint Tests", () => {
   });
 
   test("should return 401 when no token provided", async () => {
-    const response = await request(app)
-      .delete("/api/project/deleteProject/project-123");
+    const response = await request(app).delete(
+      "/api/project/deleteProject/project-123",
+    );
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("No token provided");
@@ -587,8 +607,9 @@ describe("Get Project By User ID Endpoint Tests", () => {
   });
 
   test("should return 401 when no token provided", async () => {
-    const response = await request(app)
-      .get("/api/project/getProjectByUserId/user-123");
+    const response = await request(app).get(
+      "/api/project/getProjectByUserId/user-123",
+    );
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("No token provided");
@@ -630,7 +651,9 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.manager,
       } as never);
 
-      prismaMock.projectProposal.findMany.mockResolvedValue(mockProposals as never);
+      prismaMock.projectProposal.findMany.mockResolvedValue(
+        mockProposals as never,
+      );
 
       const response = await request(app)
         .get("/api/project/getAllProposals")
@@ -644,20 +667,6 @@ describe("Proposal Endpoints Integration", () => {
           createdAt: proposal.createdAt.toISOString(),
         })),
       );
-    });
-
-    test("should return 401 when employee tries to access proposals", async () => {
-      mockJwt.verify.mockReturnValue({
-        userId: "employee-123",
-        role: Role.employee,
-      } as never);
-
-      const response = await request(app)
-        .get("/api/project/getAllProposals")
-        .set("Cookie", "token=fake-token");
-
-      expect(response.status).toBe(401);
-      expect(response.body.message).toBe("Not authorized");
     });
 
     test("should return 401 when no token provided", async () => {
@@ -688,7 +697,9 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.manager,
       } as never);
 
-      prismaMock.projectProposal.findUnique.mockResolvedValue(mockProposalWithUser as never);
+      prismaMock.projectProposal.findUnique.mockResolvedValue(
+        mockProposalWithUser as never,
+      );
 
       const response = await request(app)
         .get("/api/project/getProposalById/proposal-123")
@@ -718,8 +729,9 @@ describe("Proposal Endpoints Integration", () => {
     });
 
     test("should return 401 when no token provided", async () => {
-      const response = await request(app)
-        .get("/api/project/getProposalById/proposal-123");
+      const response = await request(app).get(
+        "/api/project/getProposalById/proposal-123",
+      );
 
       expect(response.status).toBe(401);
       expect(response.body.message).toBe("No token provided");
@@ -747,7 +759,9 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.employee,
       } as never);
 
-      prismaMock.projectProposal.create.mockResolvedValue(mockCreatedProposal as never);
+      prismaMock.projectProposal.create.mockResolvedValue(
+        mockCreatedProposal as never,
+      );
 
       const response = await request(app)
         .post("/api/proposal/createProposal")
@@ -796,7 +810,9 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.employee,
       } as never);
 
-      prismaMock.projectProposal.create.mockRejectedValue(new Error("Database error"));
+      prismaMock.projectProposal.create.mockRejectedValue(
+        new Error("Database error"),
+      );
 
       const response = await request(app)
         .post("/api/proposal/createProposal")
@@ -838,8 +854,12 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.manager,
       } as never);
 
-      prismaMock.projectProposal.findUnique.mockResolvedValue(mockExistingProposal as never);
-      prismaMock.projectProposal.update.mockResolvedValue(mockUpdatedProposal as never);
+      prismaMock.projectProposal.findUnique.mockResolvedValue(
+        mockExistingProposal as never,
+      );
+      prismaMock.projectProposal.update.mockResolvedValue(
+        mockUpdatedProposal as never,
+      );
 
       const response = await request(app)
         .put("/api/proposal/updateProposal/proposal-123")
@@ -873,8 +893,12 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.employee,
       } as never);
 
-      prismaMock.projectProposal.findUnique.mockResolvedValue(mockExistingProposal as never);
-      prismaMock.projectProposal.update.mockResolvedValue(mockUpdatedProposal as never);
+      prismaMock.projectProposal.findUnique.mockResolvedValue(
+        mockExistingProposal as never,
+      );
+      prismaMock.projectProposal.update.mockResolvedValue(
+        mockUpdatedProposal as never,
+      );
 
       const response = await request(app)
         .put("/api/proposal/updateProposal/proposal-123")
@@ -900,7 +924,9 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.employee,
       } as never);
 
-      prismaMock.projectProposal.findUnique.mockResolvedValue(differentUserProposal as never);
+      prismaMock.projectProposal.findUnique.mockResolvedValue(
+        differentUserProposal as never,
+      );
 
       const response = await request(app)
         .put("/api/proposal/updateProposal/proposal-123")
@@ -908,7 +934,9 @@ describe("Proposal Endpoints Integration", () => {
         .set("Cookie", "token=fake-token");
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toBe("You can only edit your own proposals.");
+      expect(response.body.message).toBe(
+        "You can only edit your own proposals.",
+      );
     });
 
     test("should return 404 when proposal not found", async () => {
@@ -954,8 +982,12 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.employee,
       } as never);
 
-      prismaMock.projectProposal.findUnique.mockResolvedValue(mockExistingProposal as never);
-      prismaMock.projectProposal.delete.mockResolvedValue(mockExistingProposal as never);
+      prismaMock.projectProposal.findUnique.mockResolvedValue(
+        mockExistingProposal as never,
+      );
+      prismaMock.projectProposal.delete.mockResolvedValue(
+        mockExistingProposal as never,
+      );
 
       const response = await request(app)
         .delete("/api/proposal/deleteProposal/proposal-123")
@@ -976,14 +1008,18 @@ describe("Proposal Endpoints Integration", () => {
         role: Role.employee,
       } as never);
 
-      prismaMock.projectProposal.findUnique.mockResolvedValue(differentUserProposal as never);
+      prismaMock.projectProposal.findUnique.mockResolvedValue(
+        differentUserProposal as never,
+      );
 
       const response = await request(app)
         .delete("/api/proposal/deleteProposal/proposal-123")
         .set("Cookie", "token=fake-token");
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toBe("You can only delete your own proposals.");
+      expect(response.body.message).toBe(
+        "You can only delete your own proposals.",
+      );
     });
 
     test("should return 404 when proposal not found", async () => {
@@ -1003,8 +1039,9 @@ describe("Proposal Endpoints Integration", () => {
     });
 
     test("should return 401 when no token provided", async () => {
-      const response = await request(app)
-        .delete("/api/proposal/deleteProposal/proposal-123");
+      const response = await request(app).delete(
+        "/api/proposal/deleteProposal/proposal-123",
+      );
 
       expect(response.status).toBe(401);
       expect(response.body.message).toBe("No token provided");

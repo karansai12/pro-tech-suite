@@ -1,12 +1,19 @@
-import { createProject, deleteProject, getAllProjects, getProjectById, getProjectByUserId, updateProjectById } from "../controllers/project"
-import { verifyToken } from "../midleware/auth"
-import router from "./user"
+import {
+  createProject,
+  deleteProject,
+  getAllProjects,
+  getProjectById,
+  getProjectByUserId,
+  updateProjectById,
+} from "../controllers/project";
+import { verifyToken } from "../midleware/auth";
+import router from "./user";
 
-router.post("/createProject",verifyToken,createProject)
-router.get("/getAllProjects",verifyToken,getAllProjects)
-router.get("/getProjectById/:projectId",verifyToken,getProjectById)
-router.put("/updateProject/:projectId",verifyToken,updateProjectById)
-router.delete("/deleteProject/:projectId",verifyToken,deleteProject)
-router.get("/getProjectByUserId/:id",verifyToken,getProjectByUserId)
+router.post("/createProject", verifyToken, createProject);
+router.get("/getAllProjects", verifyToken, getAllProjects);
+router.get("/getProjectById/:projectId", verifyToken, getProjectById);
+router.put("/updateProject/:projectId", verifyToken, updateProjectById);
+router.delete("/deleteProject/:projectId", verifyToken, deleteProject);
+router.get("/getProjectByUserId/:id", verifyToken, getProjectByUserId);
 
-export default router
+export default router;
