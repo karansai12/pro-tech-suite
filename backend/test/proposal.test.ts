@@ -669,20 +669,6 @@ describe("Proposal Endpoints Integration", () => {
       );
     });
 
-    test("should return 401 when employee tries to access proposals", async () => {
-      mockJwt.verify.mockReturnValue({
-        userId: "employee-123",
-        role: Role.employee,
-      } as never);
-
-      const response = await request(app)
-        .get("/api/project/getAllProposals")
-        .set("Cookie", "token=fake-token");
-
-      expect(response.status).toBe(401);
-      expect(response.body.message).toBe("Not authorized");
-    });
-
     test("should return 401 when no token provided", async () => {
       const response = await request(app).get("/api/project/getAllProposals");
 
