@@ -2,7 +2,7 @@ services:
   backend:
     extends:
       file: docker-compose.yml
-      service: backend
+      service: bacbkend
     environment:
       - NODE_ENV=production
     command: npm start

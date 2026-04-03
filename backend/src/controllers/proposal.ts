@@ -18,9 +18,9 @@ export const getAllProposals = async (req: CustomeRequest, res: Response) => {
         if (!req.user) {
             return res.status(401).json({ message: "Not authenticated" })
         }
-        if (req.user.role !== Role.manager) {
-            return res.status(401).json({ message: "Not authorized" })
-        }
+        // if (req.user.role !== Role.manager) {
+        //     return res.status(401).json({ message: "Not authorized" })
+        // }
         const proposals = await prisma.projectProposal.findMany()
         return res.status(200).json({ success: true, proposals })
     } catch (error) {
@@ -57,6 +57,9 @@ export const createProposal = async (req: CustomeRequest, res: Response) => {
         if (!req.user) {
             return res.status(401).json({ message: "User not authenticated" })
         }
+        if(req.user.role !==Role.employee){
+            return res.status(400).json({message:"manager can not creat proposal"})
+        }
 
         const proposal = await prisma.projectProposal.create({
             data: {
@@ -66,7 +69,7 @@ export const createProposal = async (req: CustomeRequest, res: Response) => {
                 status: "pending",
             }
         })
-        return res.status(200).json({ message: "Proposal created successfully.", proposal })
+        return res.status(200).json({success:true, message: "Proposal created successfully.", proposal })
     } catch (error) {
         console.error({ error })
         return res.status(400).json({ message: "Failed to create proposal.", error })
