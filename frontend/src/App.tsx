@@ -16,8 +16,6 @@ import NewTask from "./pages/newTask";
 import EditTask, { editTaskLoader } from "./pages/editTask";
 import EditProposal, { editproposalLoader } from "./pages/editProposal";
 
-
-
 // children:[
 //   {path:"/register",elemet:<Register/>},
 //   {path:"/login",elemet:<Login/>},
@@ -59,31 +57,30 @@ function App() {
         },
         {
           path: "proposals",
-          element: < Outlet/>,
+          element: <Outlet />,
           errorElement: <ErrorPage />,
-        
-          children:[
-            {
-          path: "",
-          element: <ProjectProposals />,
-          errorElement: <ErrorPage />,
-            loader: proposalLoader,
-        },
-         {
-          path: "new-proposal",
-          element: <NewProposal />,
-          errorElement: <ErrorPage />,
-        },
-         {
-          path: "edit/:id",
-          element: <EditProposal />,
-          errorElement: <ErrorPage />,
-          loader: editproposalLoader
-        },
-          ]
 
+          children: [
+            {
+              path: "",
+              element: <ProjectProposals />,
+              errorElement: <ErrorPage />,
+              loader: proposalLoader,
+            },
+            {
+              path: "new-proposal",
+              element: <NewProposal />,
+              errorElement: <ErrorPage />,
+            },
+            {
+              path: "edit/:id",
+              element: <EditProposal />,
+              errorElement: <ErrorPage />,
+              loader: editproposalLoader,
+            },
+          ],
         },
-        
+
         {
           path: "tasks",
           element: <Outlet />,

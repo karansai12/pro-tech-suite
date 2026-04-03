@@ -17,11 +17,11 @@ const Login = () => {
       const response = await axios.post(
         "http://localhost:5000/api/user/login",
         data,
-        {withCredentials:true}
+        { withCredentials: true },
       );
-        console.log({response})
+      console.log({ response });
       if (response.data.success) {
-        localStorage.setItem("user",JSON.stringify(response.data.user))
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         toast.success("Login successful", { position: "top-center" });
         navigate("/home");
       }

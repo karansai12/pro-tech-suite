@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend  # all run steps execute in backend folder
+        working-directory: backend # all run steps execute in backend folder
 
     steps:
       # 1️⃣ Checkout the repository
@@ -42,4 +42,3 @@ jobs:
       # 5️⃣ Build validation (TypeScript type check)
       - name: Build Validation
         run: npm run build:check
-        

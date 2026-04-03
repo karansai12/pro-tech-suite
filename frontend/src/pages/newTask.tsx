@@ -13,20 +13,19 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface Project {
- projectId: string;
-  projectTitle:string
+  projectId: string;
+  projectTitle: string;
 }
 
 interface FormData {
- projectId: string;
+  projectId: string;
   taskTitle: string;
   taskDescription: string;
   priority: string;
- 
 }
 
 interface LoaderData {
-  projects:Project[]
+  projects: Project[];
 }
 
 export const Loader = async () => {
@@ -50,7 +49,7 @@ export const Loader = async () => {
 };
 
 const NewTask = () => {
-  const {projects} = useLoaderData<LoaderData>()
+  const { projects } = useLoaderData<LoaderData>();
   const navigate = useNavigate();
   const { handleSubmit, register, setValue } = useForm<FormData>({});
   const onSubmit = async (data: FormData) => {
@@ -86,22 +85,25 @@ const NewTask = () => {
       setValue("taskDescription", e.target.value);
     },
   });
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 w-125"
       >
-        <Select onValueChange={(value) => setValue( "projectId",value)}>
+        <Select onValueChange={(value) => setValue("projectId", value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="select project" />
           </SelectTrigger>
           <SelectContent>
-            {projects.map((item)=>{
-              return <SelectItem value={item.projectId}>{item.projectTitle}</SelectItem>
+            {projects.map((item) => {
+              return (
+                <SelectItem value={item.projectId}>
+                  {item.projectTitle}
+                </SelectItem>
+              );
             })}
-            
           </SelectContent>
         </Select>
         <Input placeholder="task title" {...taskTitle} />

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "sonner";
 
-
 enum Role {
   manager = "manager",
   employee = "employee",
@@ -25,23 +24,23 @@ interface FormData {
   email: string;
   role: Role;
   mobileNumber: number;
-  profileImage:string
+  profileImage: string;
 }
 
 const Register = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { handleSubmit, register, setValue } = useForm<FormData>({});
   const onSubmit = async (data: FormData) => {
-    try{
-       const response = await axios.post(
-      "http://localhost:5000/api/user/register",
-      {...data,profileImage:"hh"},
-    );
-    if(response.data.success){
-       toast.success("Register successful", { position: "top-center" })
-      navigate("/home")
-    }
-    }catch(error: unknown){
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user/register",
+        { ...data, profileImage: "hh" },
+      );
+      if (response.data.success) {
+        toast.success("Register successful", { position: "top-center" });
+        navigate("/home");
+      }
+    } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         toast.error(error.response.data.message, { position: "top-center" });
       } else if (error instanceof Error) {
@@ -50,7 +49,6 @@ const Register = () => {
         toast.error("An unexpected error occurred", { position: "top-center" });
       }
     }
-   
   };
   const username = register("username", {
     required: "this field is requird",
@@ -79,12 +77,12 @@ const Register = () => {
 
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = (error) => reject(error)
-    })
-}
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
   return (
     <div className="flex items-center justify-center min-h-screen">
       <form
@@ -99,7 +97,7 @@ const Register = () => {
           }}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Role"  />
+            <SelectValue placeholder="Role" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -110,16 +108,18 @@ const Register = () => {
         </Select>
         <Input placeholder="mobilenumber" {...mobileNumber} />
         <Input placeholder="password" {...password} />
-         <Input placeholder="profile image" type="file"  onChange={async (e) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            const base64 = await convertToBase64(file)
-            setValue("profileImage", base64)
-        }
-    }}/>
-        <Button size="lg"
-          
-        >REGISTER</Button>
+        <Input
+          placeholder="profile image"
+          type="file"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const base64 = await convertToBase64(file);
+              setValue("profileImage", base64);
+            }
+          }}
+        />
+        <Button size="lg">REGISTER</Button>
       </form>
     </div>
   );

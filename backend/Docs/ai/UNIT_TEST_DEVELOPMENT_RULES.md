@@ -25,14 +25,14 @@ The project uses the following Jest settings (in `backend/jest.config.ts`):
 Always import testing utilities from `@jest/globals`:
 
 ```typescript
-import { beforeEach, describe, test, expect } from '@jest/globals';
+import { beforeEach, describe, test, expect } from "@jest/globals";
 ```
 
 Import application code relative to the project root:
 
 ```typescript
-import { app } from '../src/app';
-import { prisma } from '../src/prisma';
+import { app } from "../src/app";
+import { prisma } from "../src/prisma";
 ```
 
 ## 4. Mocking Strategy
@@ -42,9 +42,9 @@ import { prisma } from '../src/prisma';
 Use `jest.mock()` for modules that need to be mocked:
 
 ```typescript
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-jest.mock('jsonwebtoken', () => ({
+jest.mock("jsonwebtoken", () => ({
   __esModule: true,
   default: {
     verify: jest.fn(),
@@ -60,11 +60,11 @@ const mockJwt = jest.mocked(jwt);
 Use `jest-mock-extended` for deep mocking PrismaClient:
 
 ```typescript
-import type { PrismaClient } from '@prisma/client';
-import { mockDeep, mockReset } from 'jest-mock-extended';
-import type { DeepMockProxy } from 'jest-mock-extended';
+import type { PrismaClient } from "@prisma/client";
+import { mockDeep, mockReset } from "jest-mock-extended";
+import type { DeepMockProxy } from "jest-mock-extended";
 
-jest.mock('../src/prisma', () => ({
+jest.mock("../src/prisma", () => ({
   __esModule: true,
   prisma: mockDeep<PrismaClient>(),
 }));
@@ -87,7 +87,7 @@ prismaMock.user.findUnique.mockResolvedValue(mockUser);
 Use `mockRejectedValue` for error scenarios:
 
 ```typescript
-prismaMock.user.create.mockRejectedValue(new Error('Database error'));
+prismaMock.user.create.mockRejectedValue(new Error("Database error"));
 ```
 
 ## 5. API Integration Testing with Supertest
@@ -95,9 +95,9 @@ prismaMock.user.create.mockRejectedValue(new Error('Database error'));
 Use `supertest` to test Express routes:
 
 ```typescript
-import request from 'supertest';
+import request from "supertest";
 
-const response = await request(app).post('/api/auth/register').send(payload);
+const response = await request(app).post("/api/auth/register").send(payload);
 ```
 
 ### 5.1 Testing with Authentication
@@ -106,16 +106,16 @@ For protected routes, set the JWT token in cookies:
 
 ```typescript
 const response = await request(app)
-  .get('/api/protected-route')
-  .set('Cookie', 'token=fake-token');
+  .get("/api/protected-route")
+  .set("Cookie", "token=fake-token");
 ```
 
 Mock JWT verify to return user payload:
 
 ```typescript
 mockJwt.verify.mockReturnValue({
-  userId: 'mock-user',
-  email: 'test@test.com',
+  userId: "mock-user",
+  email: "test@test.com",
   role: Role.educator,
 } as never);
 ```
@@ -125,11 +125,11 @@ mockJwt.verify.mockReturnValue({
 Use `describe` blocks to group related tests:
 
 ```typescript
-describe('Register Endpoint Tests', () => {
+describe("Register Endpoint Tests", () => {
   // tests here
 });
 
-describe('Login Endpoint Tests', () => {
+describe("Login Endpoint Tests", () => {
   // tests here
 });
 ```
@@ -169,7 +169,7 @@ The application uses a standardized response format:
 
 ```typescript
 expect(response.body.success).toBe(true);
-expect(response.body.message).toBe('Expected message');
+expect(response.body.message).toBe("Expected message");
 expect(response.body.data).toEqual(expectedData);
 ```
 
@@ -177,7 +177,7 @@ For error responses:
 
 ```typescript
 expect(response.body.success).toBe(false);
-expect(response.body.message).toBe('Error message');
+expect(response.body.message).toBe("Error message");
 ```
 
 ### 7.3 Sensitive Data
@@ -187,13 +187,13 @@ Never include sensitive data (passwords, tokens) in mock responses:
 ```typescript
 // BAD: Include password
 const mockUser = {
-  password: 'hashedpassword',
+  password: "hashedpassword",
   // ...
 };
 
 // GOOD: Exclude or empty password
 const mockUser = {
-  password: '',
+  password: "",
   // ...
 };
 ```
@@ -260,9 +260,9 @@ Type mocks properly:
 
 ```typescript
 const mockValidPayload = {
-  username: 'user',
-  email: 'test@example.com',
-  role: 'student' as Role,
+  username: "user",
+  email: "test@example.com",
+  role: "student" as Role,
   // ... other fields
 } as const;
 ```
@@ -311,15 +311,15 @@ When adding a new test file or test case:
 ### 12.1 Testing Validation Errors
 
 ```typescript
-test('should return validation error when payload is missing', async () => {
-  const response = await request(app).post('/api/endpoint').send({});
+test("should return validation error when payload is missing", async () => {
+  const response = await request(app).post("/api/endpoint").send({});
 
   expect(response.status).toBe(400);
   expect(response.body.success).toBe(false);
-  expect(response.body.message).toBe('Validation Error');
+  expect(response.body.message).toBe("Validation Error");
   expect(response.body.errors).toBeDefined();
   expect(response.body.errors).toEqual([
-    { field: 'username', message: 'Username is required' },
+    { field: "username", message: "Username is required" },
     // ... other validation errors
   ]);
 });
@@ -328,31 +328,31 @@ test('should return validation error when payload is missing', async () => {
 ### 12.2 Testing Role-Based Access
 
 ```typescript
-test('should throw error when requested user role is student', async () => {
+test("should throw error when requested user role is student", async () => {
   mockJwt.verify.mockReturnValue({
-    userId: 'mock-user',
+    userId: "mock-user",
     role: Role.student,
   } as never);
 
   const response = await request(app)
-    .get('/api/admin/endpoint')
-    .set('Cookie', 'token=fake-token');
+    .get("/api/admin/endpoint")
+    .set("Cookie", "token=fake-token");
 
   expect(response.status).toBe(403);
   expect(response.body.success).toBe(false);
-  expect(response.body.message).toBe('Access is denied');
+  expect(response.body.message).toBe("Access is denied");
 });
 ```
 
 ### 12.3 Testing Search and Filter
 
 ```typescript
-test('should search users by username or email', async () => {
+test("should search users by username or email", async () => {
   prismaMock.user.findMany.mockResolvedValue(mockUsers);
 
   const response = await request(app)
-    .get('/api/users?search=test&sortBy=username&order=asc')
-    .set('Cookie', 'token=fake-token');
+    .get("/api/users?search=test&sortBy=username&order=asc")
+    .set("Cookie", "token=fake-token");
 
   expect(response.status).toBe(200);
   expect(response.body.success).toBe(true);
@@ -362,7 +362,7 @@ test('should search users by username or email', async () => {
       where: expect.objectContaining({
         OR: expect.any(Array),
       }),
-    })
+    }),
   );
 });
 ```

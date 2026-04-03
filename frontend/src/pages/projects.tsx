@@ -39,32 +39,31 @@ export const projectLoader = async () => {
   }
 };
 
-
 const Projects = () => {
-   const { projects } = useLoaderData<LoaderData>()
+  const { projects } = useLoaderData<LoaderData>();
   return (
     <div>
       <Table>
-      <TableCaption>Project list</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-25">Project Title</TableHead>
-          <TableHead>Project Description</TableHead>
-         
-        </TableRow>
-      </TableHeader>
-      {projects.map((item) => {
-        return (
-          
+        <TableCaption>Project list</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-25">Project Title</TableHead>
+            <TableHead>Project Description</TableHead>
+          </TableRow>
+        </TableHeader>
+        {projects.map((item) => {
+          return (
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">{item.projectTitle}</TableCell>
+                <TableCell className="font-medium">
+                  {item.projectTitle}
+                </TableCell>
                 <TableCell>{item.projectDescription}</TableCell>
               </TableRow>
             </TableBody>
-         
-        );
-      })} </Table>
+          );
+        })}{" "}
+      </Table>
     </div>
   );
 };

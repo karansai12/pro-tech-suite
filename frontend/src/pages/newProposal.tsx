@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -12,14 +11,14 @@ interface FormData {
 }
 
 const NewProposal = () => {
-   const navigate = useNavigate();
-    const { handleSubmit,register,setValue } = useForm<FormData>({});
-   const onSubmit = async (data: FormData) => {
+  const navigate = useNavigate();
+  const { handleSubmit, register, setValue } = useForm<FormData>({});
+  const onSubmit = async (data: FormData) => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/proposal/createProposal",
         data,
-        {withCredentials:true}
+        { withCredentials: true },
       );
       if (response.data.success) {
         toast.success("Login successful", { position: "top-center" });
@@ -35,7 +34,7 @@ const NewProposal = () => {
       }
     }
   };
-   const proposalTitle = register("proposalTitle", {
+  const proposalTitle = register("proposalTitle", {
     required: "this field is requird",
     onChange: (e) => {
       setValue("proposalTitle", e.target.value);
@@ -49,15 +48,16 @@ const NewProposal = () => {
   });
   return (
     <div className="flex items-center justify-center min-h-screen">
-        <form  onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 w-125">
-            <Input placeholder="proposal title" {...proposalTitle}/>
-            <Input placeholder="proposal description" {...proposalDescription} />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 w-125"
+      >
+        <Input placeholder="proposal title" {...proposalTitle} />
+        <Input placeholder="proposal description" {...proposalDescription} />
         <Button size="lg">CREATE PROPOSAL</Button>
-        </form>
-      
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default NewProposal
+export default NewProposal;
